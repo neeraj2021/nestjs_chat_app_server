@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/db/entities/user.entity';
 import { SignupUserDto } from 'src/dto/user/userDto.dto';
 import { Repository } from 'typeorm';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class UserService {
@@ -12,6 +13,16 @@ export class UserService {
   ) {}
 
   async registerUser(user: SignupUserDto) {
-    await this.userRepository.save(user);
+    const requestId = uuidv4();
+    const body = { ...user, requestId };
+    await this.userRepository.save(body);
+  }
+
+  async getAllUsers() {
+    const data = await this.userRepository
+      .createQueryBuilder('user')
+      .select(['user.email', 'user.name', 'user.id'])
+      .getMany();
+    return data;
   }
 }

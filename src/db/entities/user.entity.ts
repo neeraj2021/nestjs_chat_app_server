@@ -5,9 +5,9 @@ import { MyBaseEntity } from './myBase.entity';
 export class User extends MyBaseEntity {
   @PrimaryGeneratedColumn({
     type: 'int',
-    name: 'UserId',
+    name: 'Id',
   })
-  userId: number;
+  id: number;
 
   @Column({
     nullable: false,

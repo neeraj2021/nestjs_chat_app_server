@@ -9,6 +9,6 @@ export const typeOrmModule = TypeOrmModule.forRoot({
   password: 'Neeraj@123',
   database: 'chat',
   entities: [User],
-  synchronize: true,
+  synchronize: false,
   logging: true,
 });
