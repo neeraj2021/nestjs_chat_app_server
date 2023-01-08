@@ -1,5 +1,5 @@
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './entities/user.entity';
+import { User } from './entities/user/user.entity';
 
 export const typeOrmModule = TypeOrmModule.forRoot({
   type: 'mysql',
@@ -10,5 +10,5 @@ export const typeOrmModule = TypeOrmModule.forRoot({
   database: 'chat',
   entities: [User],
   synchronize: false,
-  logging: true,
+  logging: false,
 });
