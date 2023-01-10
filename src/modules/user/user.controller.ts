@@ -1,5 +1,5 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
-import { SignupUserDto } from 'src/dto/user/userDto.dto';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { LoginUserDto, SignupUserDto } from 'src/dto/user/userDto.dto';
 import { UserService } from './user.service';
 
 @Controller('/api/v1/user')
@@ -17,8 +17,13 @@ export class UserController {
     return 'User Added Sucessfully';
   }
 
+  @Post('/login')
+  async loginUser(@Body() body: LoginUserDto) {
+    return await this.userService.loginUser(body);
+  }
+
   @Get('/users')
-  getAllUsers() {
-    return this.userService.getAllUsers();
+  getAllUsers(@Query('email') email: string) {
+    return this.userService.getAllUsers(email);
   }
 }

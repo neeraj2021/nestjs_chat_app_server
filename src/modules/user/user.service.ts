@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/db/entities/user/user.entity';
-import { SignupUserDto } from 'src/dto/user/userDto.dto';
-import { Repository } from 'typeorm';
+import { LoginUserDto, SignupUserDto } from 'src/dto/user/userDto.dto';
+import { EntityNotFoundError, Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
@@ -18,10 +18,28 @@ export class UserService {
     await this.userRepository.save(body);
   }
 
-  async getAllUsers() {
+  async loginUser(body: LoginUserDto) {
+    const { email, password } = body;
+
+    const user = await this.userRepository
+      .createQueryBuilder('user')
+      .select(['user.name', 'user.email'])
+      .where('user.email=:email', { email: email })
+      .andWhere('user.password=:password', { password: password })
+      .getOne();
+
+    if (user) {
+      return user;
+    } else {
+      throw new NotFoundException('User Not Found !!');
+    }
+  }
+
+  async getAllUsers(email: string) {
     const data = await this.userRepository
       .createQueryBuilder('user')
       .select(['user.email', 'user.name', 'user.id'])
+      .where('user.email != :email', { email: email })
       .getMany();
     return data;
   }
