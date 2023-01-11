@@ -5,7 +5,6 @@ import {
   OnGatewayInit,
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
-import { ChatService } from './chat.service';
 import {
   OnGatewayConnection,
   OnGatewayDisconnect,
@@ -16,6 +15,7 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets/decorators';
 import { instrument } from '@socket.io/admin-ui';
+import { addMessage, createRoom, localData } from 'src/db/sample';
 
 @WebSocketGateway({
   cors: {
@@ -52,17 +52,27 @@ export class ChatGateway
   }
 
   @SubscribeMessage('joinRoom')
-  joinRoom(@MessageBody() room: any, @ConnectedSocket() socket: Socket) {
+  joinRoom2(@MessageBody() body: any, @ConnectedSocket() socket: Socket) {
+    const room = createRoom(body);
     socket.join(room);
-    this.wss.emit('joined', `${room.email} Join Room ${socket.id}`);
+    this.wss.emit('joined', room);
   }
 
   @SubscribeMessage('msgToServer')
-  handleMessage(socket: Socket, body: any): void {
-    if (body.room) {
-      this.wss.to(body.room).emit('msgToClient', body.message);
-    } else {
-      this.wss.emit('msgToClient', body.message);
-    }
+  handleMessage2(socket: Socket, body: any): void {
+    const room = createRoom(body);
+    this.wss.to(room).emit('msgToClient', body);
+    addMessage(body);
+  }
+
+  @SubscribeMessage('oldMessages')
+  getOldMessage(socket: Socket, body: any): void {
+    const data = localData.filter((val) => {
+      return (
+        (val.from == body.from && val.to == body.to) ||
+        (val.from == body.to && val.to == body.from)
+      );
+    });
+    this.wss.to(socket.id).emit('setOldMessage', data);
   }
 }
