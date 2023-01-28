@@ -23,6 +23,7 @@ import { addMessage, createRoom, localData } from 'src/db/sample';
       'http://localhost:3000',
       'https://admin.socket.io',
       'http://127.0.0.1:5500',
+      'https://nextjs-chat-app-client.vercel.app',
     ],
     credentials: true,
     transports: ['websocket'],
