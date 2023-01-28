@@ -23,7 +23,12 @@ export class UserController {
   }
 
   @Get('/users')
-  getAllUsers(@Query('email') email: string) {
-    return this.userService.getAllUsers(email);
+  async getAllUsers(@Query('email') email: string) {
+    return await this.userService.getAllUsers(email);
+  }
+
+  @Get('/all')
+  async getAllUsersList() {
+    return this.userService.getAllUsersList()
   }
 }

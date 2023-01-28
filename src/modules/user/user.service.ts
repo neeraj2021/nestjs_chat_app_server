@@ -43,4 +43,9 @@ export class UserService {
       .getMany();
     return data;
   }
+
+  async getAllUsersList() {
+    const data = await this.userRepository.createQueryBuilder('user').getMany();
+    return data;
+  }
 }
